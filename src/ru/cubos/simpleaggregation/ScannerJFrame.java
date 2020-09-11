@@ -3,6 +3,7 @@ package ru.cubos.simpleaggregation;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Locale;
 
 public class ScannerJFrame extends JFrame {
     private String scanResult = "";
@@ -10,21 +11,18 @@ public class ScannerJFrame extends JFrame {
     private int keyDelayForScanner = 100;
     public ScannerJFrame(){
 
-        Thread checkLastKeyDelay = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    long keyPeriod = System.currentTimeMillis() - lastScanTime;
-                    if (keyPeriod>keyDelayForScanner && scanResult!=""){
-                        System.out.println("Scan result " + scanResult);
-                        onScan(scanResult);
-                        scanResult = "";
-                    }
-                    try {
-                        Thread.sleep(keyDelayForScanner/2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        Thread checkLastKeyDelay = new Thread(() -> {
+            while(true){
+                long keyPeriod = System.currentTimeMillis() - lastScanTime;
+                if (keyPeriod>keyDelayForScanner && scanResult!=""){
+                    System.out.println("Scan result " + scanResult);
+                    onScan(scanResult);
+                    scanResult = "";
+                }
+                try {
+                    Thread.sleep(keyDelayForScanner/2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -35,6 +33,7 @@ public class ScannerJFrame extends JFrame {
         this.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
+                switchKeyBoardEn();
                 lastScanTime = System.currentTimeMillis();
                 onKeyGot(keyEvent.getKeyChar());
                 scanResult += (char)keyEvent.getKeyChar();
@@ -44,6 +43,12 @@ public class ScannerJFrame extends JFrame {
             @Override
             public void keyReleased(KeyEvent keyEvent) { }
         });
+    }
+
+    public void switchKeyBoardEn(){
+        Locale loc = new Locale("en","US");
+        this.setLocale(loc);
+        this.getInputContext().selectInputMethod(loc);
     }
 
     public void onKeyGot(char key){
