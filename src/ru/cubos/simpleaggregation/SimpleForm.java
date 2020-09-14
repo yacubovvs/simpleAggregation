@@ -9,10 +9,12 @@ public class SimpleForm extends ScannerJFrame {
     private JPanel mainPanel;
     private JLabel cargoCode;
     private JLabel totalInCargo;
-    private JLabel itemCode;
+    private JTextArea itemCode;
     private JLabel cargoLabel;
     private JLabel itemLabel;
     private JLabel totalInCargoLabel;
+    private JLabel statusLabel;
+    private JPanel statusPanel;
 
     public static final String REGEXP_BARCODE = "(00[0-9]{18})$";
     public static final String REGEXP_DATAMATRIX = "^.?((01[0-9]{14})(21[0-9a-zA-Z]{13}).?(91[0-9a-zA-Z]{4}).?(92[0-9a-zA-Z+/=]{44}))";
@@ -20,7 +22,7 @@ public class SimpleForm extends ScannerJFrame {
     public SimpleForm() {
         super();
 
-        setSize(400, 300);
+        setSize(320, 240);
         setContentPane(mainPanel);
 
         setTitle(Settings.FORM_TITLE);
@@ -36,12 +38,66 @@ public class SimpleForm extends ScannerJFrame {
 
         mainPanel.setBackground(new Color(Settings.BACKGROUND_COLOR[0],Settings.BACKGROUND_COLOR[1],Settings.BACKGROUND_COLOR[2]));
 
+        //textArea.setText(text);
+        itemCode.setWrapStyleWord(true);
+        itemCode.setLineWrap(true);
+        itemCode.setOpaque(false);
+        itemCode.setEditable(false);
+        itemCode.setFocusable(false);
+        itemCode.setBackground(UIManager.getColor("Label.background"));
+        itemCode.setFont(UIManager.getFont("Label.font"));
+        itemCode.setBorder(UIManager.getBorder("Label.border"));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setConnectingStatus();
+        statusPanel.setMinimumSize(new Dimension(-1, Settings.STATUS_LABEL_HEIGHT));
+        statusPanel.setMaximumSize(new Dimension(-1, Settings.STATUS_LABEL_HEIGHT));
+        statusPanel.setSize(new Dimension(-1, Settings.STATUS_LABEL_HEIGHT));
+
+        itemCode.setMinimumSize(new Dimension(-1, Settings.ITEM_TEXT_LABEL_SIZE));
+        itemCode.setMaximumSize(new Dimension(-1, Settings.ITEM_TEXT_LABEL_SIZE));
+        itemCode.setSize(new Dimension(-1, Settings.ITEM_TEXT_LABEL_SIZE));
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        setConnectingStatus();
+                        Thread.sleep(5000);
+                        setReadyStatus();
+                        Thread.sleep(5000);
+                        setErrorStatus();
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
+
         setVisible(true);
 
         onScan("00123456789012345678");
-        onScan("<html>01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=</html>");
+        onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
+        //onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
+
+    }
+
+    void setConnectingStatus(){
+        statusLabel.setText(Settings.STATUS_CONNECTING);
+        statusPanel.setBackground(new Color(Settings.STATUS_CONNECTING_COLOR[0], Settings.STATUS_CONNECTING_COLOR[1], Settings.STATUS_CONNECTING_COLOR[2]));
+    }
+
+    void setReadyStatus(){
+        statusLabel.setText(Settings.STATUS_READY);
+        statusPanel.setBackground(new Color(Settings.STATUS_READY_COLOR[0], Settings.STATUS_READY_COLOR[1], Settings.STATUS_READY_COLOR[2]));
+    }
+
+    void setErrorStatus(){
+        statusLabel.setText(Settings.STATUS_ERROR);
+        statusPanel.setBackground(new Color(Settings.STATUS_ERROR_COLOR[0], Settings.STATUS_ERROR_COLOR[1], Settings.STATUS_ERROR_COLOR[2]));
     }
 
     void setTextSize(JLabel jLabel, int fontSize){
