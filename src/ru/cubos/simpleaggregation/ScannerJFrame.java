@@ -1,6 +1,7 @@
 package ru.cubos.simpleaggregation;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Locale;
@@ -10,12 +11,15 @@ public class ScannerJFrame extends JFrame {
     private long lastScanTime;
     private int keyDelayForScanner = 100;
     public ScannerJFrame(){
+        startScanListeners();
+    }
 
+    public void startScanListeners(){
         Thread checkLastKeyDelay = new Thread(() -> {
             while(true){
                 long keyPeriod = System.currentTimeMillis() - lastScanTime;
                 if (keyPeriod>keyDelayForScanner && scanResult!=""){
-                    System.out.println("Scan result " + scanResult);
+                    //System.out.println("Scan result " + scanResult);
                     onScan(scanResult);
                     scanResult = "";
                 }
@@ -30,19 +34,20 @@ public class ScannerJFrame extends JFrame {
         checkLastKeyDelay.start();
         lastScanTime = System.currentTimeMillis();
 
-        this.addKeyListener(new KeyListener() {
+        KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
             @Override
-            public void keyTyped(KeyEvent keyEvent) {
+            public boolean dispatchKeyEvent(final KeyEvent e) {
                 switchKeyBoardEn();
-                lastScanTime = System.currentTimeMillis();
-                onKeyGot(keyEvent.getKeyChar());
-                scanResult += (char)keyEvent.getKeyChar();
+                if(e.getID() == KeyEvent.KEY_PRESSED && e.getModifiers() == 0) {
+                    lastScanTime = System.currentTimeMillis();
+                    onKeyGot(e.getKeyChar());
+                    scanResult += (char) e.getKeyChar();
+                    return true;
+                }
+                return true;
             }
-            @Override
-            public void keyPressed(KeyEvent keyEvent) { }
-            @Override
-            public void keyReleased(KeyEvent keyEvent) { }
-        });
+        };
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
     }
 
     public void switchKeyBoardEn(){
@@ -56,6 +61,6 @@ public class ScannerJFrame extends JFrame {
     }
 
     public void onScan(String scanResult){
-
+        //System.out.println("scanned value");
     }
 }

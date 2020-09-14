@@ -2,41 +2,77 @@ package ru.cubos.simpleaggregation;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SimpleForm extends ScannerJFrame {
-
     private JPanel mainPanel;
     private JLabel cargoCode;
-    private JButton newCargoButton;
-    private JButton clearCargo;
-    private JButton sendToServer;
     private JLabel totalInCargo;
-    private JPanel scanHistoryPanel;
+    private JLabel itemCode;
+    private JLabel cargoLabel;
+    private JLabel itemLabel;
+    private JLabel totalInCargoLabel;
+
+    public static final String REGEXP_BARCODE = "(00[0-9]{18})$";
+    public static final String REGEXP_DATAMATRIX = "^.?((01[0-9]{14})(21[0-9a-zA-Z]{13}).?(91[0-9a-zA-Z]{4}).?(92[0-9a-zA-Z+/=]{44}))";
 
     public SimpleForm() {
         super();
+
         setSize(400, 300);
         setContentPane(mainPanel);
-        setVisible(true);
-        setTitle("Simple Aggregation");
 
-        scanHistoryPanel.setVisible(false);
+        setTitle(Settings.FORM_TITLE);
+
+        cargoLabel.setText(Settings.CARGO_LABEL_TEXT);
+        itemLabel.setText(Settings.ITEM_LABEL_TEXT);
+        totalInCargoLabel.setText(Settings.TOTAL_LABEL_TEXT);
+
+        setTextSize(cargoLabel, Settings.CARGO_LABEL_TEXT_SIZE);
+        setTextSize(itemLabel, Settings.ITEM_LABEL_TEXT_SIZE);
+        setTextSize(totalInCargoLabel, Settings.TOTAL_LABEL_TEXT_SIZE);
+
+        mainPanel.setBackground(new Color(Settings.BACKGROUND_COLOR[0],Settings.BACKGROUND_COLOR[1],Settings.BACKGROUND_COLOR[2]));
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
+    void setTextSize(JLabel jLabel, int fontSize){
+        Font labelFont = jLabel.getFont();
+        jLabel.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSize));
     }
 
     public static void main(String[] args) {
         // write your code here
+        Settings.init();
         new SimpleForm();
     }
 
+    @Override
     public void onKeyGot(char key) {
         return;
     }
 
+    @Override
     public void onScan(String scanResult) {
-        return;
-    }
+        System.out.println("scanned value: " + scanResult);
+        scanResult = scanResult.trim();
+        if(scanResult.equals("")) scanResult = "-";
 
+        Pattern patternDataMatrix = Pattern.compile(REGEXP_DATAMATRIX);
+        Pattern patternBoxBarcode = Pattern.compile(REGEXP_BARCODE);
+        Matcher matcherDataMatrix = patternDataMatrix.matcher(scanResult);
+        Matcher matcherBoxBarcode = patternBoxBarcode.matcher(scanResult);
+
+        if(matcherBoxBarcode.matches()){
+            cargoCode.setText(scanResult);
+        }else if(matcherDataMatrix.matches()){
+            itemCode.setText(scanResult);
+        }else{
+            itemCode.setText(scanResult);
+        }
+    }
 }
