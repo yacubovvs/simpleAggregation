@@ -1,14 +1,12 @@
 package ru.cubos.simpleaggregation;
 
-import ru.cubos.simpleaggregation.Helpers.Common;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SimpleForm extends ScannerJFrame {
+public class Insert extends ScannerJFrame {
     private JPanel mainPanel;
     private JLabel cargoCode;
     private JLabel totalInCargo;
@@ -22,7 +20,7 @@ public class SimpleForm extends ScannerJFrame {
     public static final String REGEXP_BARCODE = "(00[0-9]{18})$";
     public static final String REGEXP_DATAMATRIX = "^.?((01[0-9]{14})(21[0-9a-zA-Z]{13}).?(91[0-9a-zA-Z]{4}).?(92[0-9a-zA-Z+/=]{44}))";
 
-    public SimpleForm() {
+    public Insert() {
         super();
 
         setSize(320, 240);
@@ -75,12 +73,14 @@ public class SimpleForm extends ScannerJFrame {
 
         setConnectingStatus();
         setTextSize(statusLabel, Settings.STATUS_FONT_SIZE);
+        //setExtendedState(MAXIMIZED_BOTH);
+
         setVisible(true);
 
         onScan("00123456789012345678");
         onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
-        totalInCargo.setBorder(new EmptyBorder(-7,10,0,0));
-        totalInCargoLabel.setBorder(new EmptyBorder(0,0,-3,0));
+        totalInCargo.setBorder(new EmptyBorder(-6,10,0,0));
+        totalInCargoLabel.setBorder(new EmptyBorder(0,0,0,0));
         totalInCargo.setText("00000");
         //onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
 
@@ -113,8 +113,8 @@ public class SimpleForm extends ScannerJFrame {
 
     public static void main(String[] args) {
         // write your code here
-        Settings.init();
-        new SimpleForm();
+        Settings.init("settings/form_insert_320_240.txt");
+        new Insert();
     }
 
     @Override

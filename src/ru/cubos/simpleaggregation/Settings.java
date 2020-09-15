@@ -49,8 +49,8 @@ public class Settings {
     static public int       TOTAL_LABEL_PADDING[]           = {0,0,0,0};
     static public int       TOTAL_TEXT_PADDING[]            = {0,0,0,0};
 
-    public static void init(){
-        try(FileReader reader = new FileReader("settings/form.txt"))
+    public static void init(String path){
+        try(FileReader reader = new FileReader(path))
         {
             // читаем посимвольно
             String string;
