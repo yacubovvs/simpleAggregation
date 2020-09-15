@@ -3,6 +3,7 @@ package ru.cubos.simpleaggregation;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,15 +76,30 @@ public class Insert extends ScannerJFrame {
         setTextSize(statusLabel, Settings.STATUS_FONT_SIZE);
         //setExtendedState(MAXIMIZED_BOTH);
 
+        setPadding(cargoLabel, Settings.CARGO_LABEL_PADDING);
+        setPadding(cargoCode, Settings.CARGO_TEXT_PADDING);
+
+        setPadding(itemLabel, Settings.ITEM_LABEL_PADDING);
+        setPadding(itemCode, Settings.ITEM_TEXT_PADDING);
+
+        setPadding(totalInCargoLabel, Settings.TOTAL_LABEL_PADDING);
+        setPadding(totalInCargo, Settings.TOTAL_TEXT_PADDING);
+
         setVisible(true);
 
         onScan("00123456789012345678");
         onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
-        totalInCargo.setBorder(new EmptyBorder(-6,10,0,0));
-        totalInCargoLabel.setBorder(new EmptyBorder(0,0,0,0));
         totalInCargo.setText("00000");
         //onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
 
+    }
+
+    void setPadding(JLabel jLabel, int paddings[]){
+        jLabel.setBorder(new EmptyBorder(paddings[0],paddings[1],paddings[2],paddings[3]));
+    }
+
+    void setPadding(JTextArea jLabel, int paddings[]){
+        jLabel.setBorder(new EmptyBorder(paddings[0],paddings[1],paddings[2],paddings[3]));
     }
 
     void setConnectingStatus(){
