@@ -1,6 +1,5 @@
 package ru.cubos.simpleaggregation;
 
-import javafx.css.CssParser;
 import ru.cubos.simpleaggregation.Helpers.APIConnector;
 import ru.cubos.simpleaggregation.Helpers.Common;
 import ru.cubos.simpleaggregation.Helpers.JSONParser;
