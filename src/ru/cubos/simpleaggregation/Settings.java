@@ -6,57 +6,58 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Settings {
-    static public int       BACKGROUND_COLOR[]              = {0,0,0};
-    static public String    CARGO_LABEL_TEXT                = "";
-    static public int       CARGO_LABEL_TEXT_COLOR[]        = {255,255,255};
-    static public int       CARGO_LABEL_TEXT_SIZE           = 16;
-    static public int       CARGO_TEXT_COLOR[]              = {255,255,255};
-    static public int       CARGO_TEXT_SIZE                 = 16;
-    static public String    ITEM_LABEL_TEXT                 = "";
-    static public int       ITEM_LABEL_TEXT_COLOR[]         = {255,255,255};
-    static public int       ITEM_LABEL_TEXT_SIZE            = 16;
-    static public int       ITEM_TEXT_COLOR[]               = {255,255,255};
-    static public int       ITEM_TEXT_SIZE                  = 16;
-    static public String    TOTAL_LABEL_TEXT                = "";
-    static public int       TOTAL_LABEL_TEXT_COLOR[]        = {255,255,255};
-    static public int       TOTAL_LABEL_TEXT_SIZE           = 16;
-    static public String    FORM_TITLE                      = "Simple aggregation";
+    public int       BACKGROUND_COLOR[]              = {0,0,0};
+    public String    CARGO_LABEL_TEXT                = "";
+    public int       CARGO_LABEL_TEXT_COLOR[]        = {255,255,255};
+    public int       CARGO_LABEL_TEXT_SIZE           = 16;
+    public int       CARGO_TEXT_COLOR[]              = {255,255,255};
+    public int       CARGO_TEXT_SIZE                 = 16;
+    public String    ITEM_LABEL_TEXT                 = "";
+    public int       ITEM_LABEL_TEXT_COLOR[]         = {255,255,255};
+    public int       ITEM_LABEL_TEXT_SIZE            = 16;
+    public int       ITEM_TEXT_COLOR[]               = {255,255,255};
+    public int       ITEM_TEXT_SIZE                  = 16;
+    public String    TOTAL_LABEL_TEXT                = "";
+    public int       TOTAL_LABEL_TEXT_COLOR[]        = {255,255,255};
+    public int       TOTAL_LABEL_TEXT_SIZE           = 16;
+    public String    FORM_TITLE                      = "Simple aggregation";
 
-    static public String    ARM_ID                          = "";
+    public String    ARM_ID                          = "";
 
-    static public int       STATUS_LABEL_HEIGHT             = 50;
-    static public String    STATUS_READY                    = "Ready";
-    static public String    STATUS_ERROR                    = "Error";
-    static public String    STATUS_CONNECTING               = "Connecting";
-    static public int       STATUS_READY_COLOR[]            = {255,255,255};
-    static public int       STATUS_ERROR_COLOR[]            = {255,255,255};
-    static public int       STATUS_CONNECTING_COLOR[]       = {255,255,255};
+    public int       STATUS_LABEL_HEIGHT             = 50;
+    public String    STATUS_READY                    = "Ready";
+    public String    STATUS_ERROR                    = "Error";
+    public String    STATUS_CONNECTING               = "Connecting";
+    public int       STATUS_READY_COLOR[]            = {255,255,255};
+    public int       STATUS_ERROR_COLOR[]            = {255,255,255};
+    public int       STATUS_CONNECTING_COLOR[]       = {255,255,255};
 
-    static public int       ITEM_TEXT_HEIGHT                = 40;
+    public int       ITEM_TEXT_HEIGHT                = 40;
 
-    static public int       TOTAL_TEXT_COLOR[]              = {255,255,255};
-    static public int       TOTAL_TEXT_SIZE                 = 16;
-    static public int       STATUS_FONT_SIZE                = 16;
+    public int       TOTAL_TEXT_COLOR[]              = {255,255,255};
+    public int       TOTAL_TEXT_SIZE                 = 16;
+    public int       STATUS_FONT_SIZE                = 16;
 
-    static public int       STATUS_READY_TEXT_COLOR[]       = {255,255,255};
-    static public int       STATUS_ERROR_TEXT_COLOR[]       = {255,255,255};
-    static public int       STATUS_CONNECTING_TEXT_COLOR[]  = {255,255,255};
+    public int       STATUS_READY_TEXT_COLOR[]       = {255,255,255};
+    public int       STATUS_ERROR_TEXT_COLOR[]       = {255,255,255};
+    public int       STATUS_CONNECTING_TEXT_COLOR[]  = {255,255,255};
 
-    static public int       CARGO_LABEL_PADDING[]           = {0,0,0,0};
-    static public int       CARGO_TEXT_PADDING[]            = {0,0,0,0};
-    static public int       ITEM_LABEL_PADDING[]            = {0,0,0,0};
-    static public int       ITEM_TEXT_PADDING[]             = {0,0,0,0};
-    static public int       TOTAL_LABEL_PADDING[]           = {0,0,0,0};
-    static public int       TOTAL_TEXT_PADDING[]            = {0,0,0,0};
+    public int       CARGO_LABEL_PADDING[]           = {0,0,0,0};
+    public int       CARGO_TEXT_PADDING[]            = {0,0,0,0};
+    public int       ITEM_LABEL_PADDING[]            = {0,0,0,0};
+    public int       ITEM_TEXT_PADDING[]             = {0,0,0,0};
+    public int       TOTAL_LABEL_PADDING[]           = {0,0,0,0};
+    public int       TOTAL_TEXT_PADDING[]            = {0,0,0,0};
 
-    public static void init(String path){
+    public String    REGEXP_BARCODE                  = "";
+    public String    REGEXP_DATAMATRIX               = "";
+
+    public void init(String path){
         try(FileReader reader = new FileReader(path))
         {
-            // читаем посимвольно
             String string;
             while (true){
                 string = readString(reader);
-                //System.out.println(string);
                 switch (string){
                     case "#END":
                         return;
@@ -168,6 +169,10 @@ public class Settings {
                     case "TOTAL_TEXT_PADDING:":
                         TOTAL_TEXT_PADDING = parsePaddings(readString(reader));
                         break;
+                    case "REGEXP_BARCODE:":
+                        REGEXP_BARCODE = readString(reader);
+                    case "REGEXP_DATAMATRIX:":
+                        REGEXP_DATAMATRIX = readString(reader);
                     default:
                         continue;
                 }
