@@ -1,7 +1,10 @@
 ARM_ID:
-001
+2624228900
+
+SERVER_ADDRESS:
+http://mdlp.ddns.net/
 
 WINDOW_SIZE:
-_fullscreen
+fullscreen
 
 #END

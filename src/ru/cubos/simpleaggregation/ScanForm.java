@@ -1,5 +1,10 @@
 package ru.cubos.simpleaggregation;
 
+import javafx.css.CssParser;
+import ru.cubos.simpleaggregation.Helpers.APIConnector;
+import ru.cubos.simpleaggregation.Helpers.Common;
+import ru.cubos.simpleaggregation.Helpers.JSONParser;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -26,8 +31,17 @@ public class ScanForm extends ScannerJFrame {
     String current_item     = "";
     String current_count    = "";
 
-    public ScanForm(String settings_files[]) {
+    private FormType currentType;
+
+    enum FormType {
+        Insert,
+        Extract
+    }
+
+    public ScanForm(String settings_files[], FormType type) {
         super();
+
+        this.currentType = type;
         switchKeyBoardEn();
 
         for(String settings_file: settings_files){
@@ -75,7 +89,7 @@ public class ScanForm extends ScannerJFrame {
         itemCode.setFont(UIManager.getFont("Label.font"));
         itemCode.setBorder(UIManager.getBorder("Label.border"));
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         statusPanel.setMinimumSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));
         statusPanel.setMaximumSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));
         statusPanel.setSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));
@@ -179,13 +193,27 @@ public class ScanForm extends ScannerJFrame {
     }
 
     public static void main(String[] args) {
+        startInsert();
+    }
+
+    public static void startInsert() {
         String settings_files[] = {
                 "settings/scanner_mdlp.txt",
                 "settings/common.txt",
                 "settings/form_insert_fullScreen.txt",
         };
 
-        new ScanForm(settings_files);
+        new ScanForm(settings_files, FormType.Insert);
+    }
+
+    public static void startExtract() {
+        String settings_files[] = {
+                "settings/scanner_mdlp.txt",
+                "settings/common.txt",
+                "settings/form_extract_fullScreen.txt",
+        };
+
+        new ScanForm(settings_files, FormType.Extract);
     }
 
     @Override
@@ -211,8 +239,17 @@ public class ScanForm extends ScannerJFrame {
         }else if(matcherDataMatrix.matches()){
             onInputNewItem(scanResult);
         }else{
-            if(("" + scanResult).equals("command_exit")){
+            //Commands
+            if(scanResult.equals("command_exit")){
                 System.exit(0);
+            }if(scanResult.equals("command_insert")){
+                stopKeyListeners();
+                this.dispose();
+                startInsert();
+            }if(scanResult.equals("command_extract")){
+                stopKeyListeners();
+                this.dispose();
+                startExtract();
             }else{
                 setErrorStatus("Не верный штрих код");
             }
@@ -255,6 +292,44 @@ public class ScanForm extends ScannerJFrame {
             setErrorStatus("Не введен короб");
         }else{
             setPendingStatus("Отправка");
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    APIConnector apiConnector = new APIConnector(settings.SERVER_ADDRESS, settings.ARM_ID);
+
+
+                    if(currentType==FormType.Extract){
+                        String resultText = apiConnector.insertItemDisagregation(current_box, current_item);
+                        String result = JSONParser.getElementOfJSON(resultText, "result");
+                        if(result.substring(0,5).equals("error")){
+                            String message = JSONParser.getElementOfJSON(resultText, "message");
+                            setErrorStatus(message);
+                        }else if(result.equals("success")){
+                            setReadyStatus();
+                            String count = JSONParser.getElementOfJSON(resultText, "count");
+                            setValueInCargo(Common.hardParseInt(count, 0));
+                        }else{
+                            setErrorStatus("Ошибка связи с сервером");
+                        }
+                    }else if(currentType==FormType.Insert){
+                        String resultText = apiConnector.insertItemAggregation(current_box, current_item);
+                        String result = JSONParser.getElementOfJSON(resultText, "result");
+                        if(result.substring(0,5).equals("error")){
+                            String message = JSONParser.getElementOfJSON(resultText, "message");
+                            setErrorStatus(message);
+                        }else if(result.equals("success")){
+                            setReadyStatus();
+                            String count = JSONParser.getElementOfJSON(resultText, "count");
+                            setValueInCargo(Common.hardParseInt(count, 0));
+                        }else{
+                            setErrorStatus("Ошибка связи с сервером");
+                        }
+                    }
+                }
+            });
+            thread.start();
+
         }
     }
 }

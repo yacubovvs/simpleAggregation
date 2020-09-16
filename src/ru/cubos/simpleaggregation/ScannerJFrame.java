@@ -14,9 +14,21 @@ public class ScannerJFrame extends JFrame {
         startScanListeners();
     }
 
+    Thread checkLastKeyDelay;
+    KeyEventDispatcher keyEventDispatcher;
+    private boolean stopThreadVal = false;
+
+    public void stopKeyListeners(){
+        stopThreadVal = true;
+        try {
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(keyEventDispatcher);
+        }catch(Exception e){}
+    }
+
     public void startScanListeners(){
-        Thread checkLastKeyDelay = new Thread(() -> {
+        checkLastKeyDelay = new Thread(() -> {
             while(true){
+                if(stopThreadVal) break;
                 long keyPeriod = System.currentTimeMillis() - lastScanTime;
                 if (keyPeriod>keyDelayForScanner && scanResult!=""){
                     //System.out.println("Scan result " + scanResult);
@@ -34,21 +46,19 @@ public class ScannerJFrame extends JFrame {
         checkLastKeyDelay.start();
         lastScanTime = System.currentTimeMillis();
 
-        KeyEventDispatcher keyEventDispatcher = new KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(final KeyEvent e) {
-                switchKeyBoardEn();
-                if(e.getID() == KeyEvent.KEY_PRESSED) {
-                    lastScanTime = System.currentTimeMillis();
-                    onKeyGot(e.getKeyChar());
-                    if(e.getKeyChar()==65535) return true;
-                    scanResult += (char) e.getKeyChar();
-                    return true;
-                }
+        keyEventDispatcher = e -> {
+            switchKeyBoardEn();
+            if(e.getID() == KeyEvent.KEY_PRESSED) {
+                lastScanTime = System.currentTimeMillis();
+                onKeyGot(e.getKeyChar());
+                if(e.getKeyChar()==65535) return true;
+                scanResult += (char) e.getKeyChar();
                 return true;
             }
+            return true;
         };
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+
     }
 
     public void switchKeyBoardEn(){
@@ -57,11 +67,7 @@ public class ScannerJFrame extends JFrame {
         this.getInputContext().selectInputMethod(loc);
     }
 
-    public void onKeyGot(char key){
+    public void onKeyGot(char key){}
 
-    }
-
-    public void onScan(String scanResult){
-        //System.out.println("scanned value");
-    }
+    public void onScan(String scanResult){}
 }

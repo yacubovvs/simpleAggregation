@@ -59,6 +59,8 @@ public class Settings {
     public int          FORM_TITLE_SIZE                 = 20;
     public int          FORM_TITLE_PADDING[]            = {0,0,0,0};
 
+    public String       SERVER_ADDRESS                  = "";
+
     public void init(String path){
         try(FileReader reader = new FileReader(path))
         {
@@ -197,6 +199,9 @@ public class Settings {
                         break;
                     case "FORM_TITLE_PADDING:":
                         FORM_TITLE_PADDING = parsePaddings(readString(reader));
+                        break;
+                    case "SERVER_ADDRESS:":
+                        SERVER_ADDRESS = readString(reader);
                         break;
                     default:
                         continue;
