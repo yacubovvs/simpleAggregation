@@ -1,4 +1,7 @@
 ARM_ID:
 001
 
+WINDOW_SIZE:
+_fullscreen
+
 #END

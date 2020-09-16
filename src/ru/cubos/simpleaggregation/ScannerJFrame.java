@@ -38,9 +38,10 @@ public class ScannerJFrame extends JFrame {
             @Override
             public boolean dispatchKeyEvent(final KeyEvent e) {
                 switchKeyBoardEn();
-                if(e.getID() == KeyEvent.KEY_PRESSED && e.getModifiers() == 0) {
+                if(e.getID() == KeyEvent.KEY_PRESSED) {
                     lastScanTime = System.currentTimeMillis();
                     onKeyGot(e.getKeyChar());
+                    if(e.getKeyChar()==65535) return true;
                     scanResult += (char) e.getKeyChar();
                     return true;
                 }

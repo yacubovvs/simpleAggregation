@@ -6,51 +6,58 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Settings {
-    public int       BACKGROUND_COLOR[]              = {0,0,0};
-    public String    CARGO_LABEL_TEXT                = "";
-    public int       CARGO_LABEL_TEXT_COLOR[]        = {255,255,255};
-    public int       CARGO_LABEL_TEXT_SIZE           = 16;
-    public int       CARGO_TEXT_COLOR[]              = {255,255,255};
-    public int       CARGO_TEXT_SIZE                 = 16;
-    public String    ITEM_LABEL_TEXT                 = "";
-    public int       ITEM_LABEL_TEXT_COLOR[]         = {255,255,255};
-    public int       ITEM_LABEL_TEXT_SIZE            = 16;
-    public int       ITEM_TEXT_COLOR[]               = {255,255,255};
-    public int       ITEM_TEXT_SIZE                  = 16;
-    public String    TOTAL_LABEL_TEXT                = "";
-    public int       TOTAL_LABEL_TEXT_COLOR[]        = {255,255,255};
-    public int       TOTAL_LABEL_TEXT_SIZE           = 16;
-    public String    FORM_TITLE                      = "Simple aggregation";
+    public int          BACKGROUND_COLOR[]              = {0,0,0};
+    public String       CARGO_LABEL_TEXT                = "";
+    public int          CARGO_LABEL_TEXT_COLOR[]        = {255,255,255};
+    public int          CARGO_LABEL_TEXT_SIZE           = 16;
+    public int          CARGO_TEXT_COLOR[]              = {255,255,255};
+    public int          CARGO_TEXT_SIZE                 = 16;
+    public String       ITEM_LABEL_TEXT                 = "";
+    public int          ITEM_LABEL_TEXT_COLOR[]         = {255,255,255};
+    public int          ITEM_LABEL_TEXT_SIZE            = 16;
+    public int          ITEM_TEXT_COLOR[]               = {255,255,255};
+    public int          ITEM_TEXT_SIZE                  = 16;
+    public String       TOTAL_LABEL_TEXT                = "";
+    public int          TOTAL_LABEL_TEXT_COLOR[]        = {255,255,255};
+    public int          TOTAL_LABEL_TEXT_SIZE           = 16;
+    public String       FORM_TITLE                      = "Simple aggregation";
 
-    public String    ARM_ID                          = "";
+    public String       ARM_ID                          = "";
 
-    public int       STATUS_LABEL_HEIGHT             = 50;
-    public String    STATUS_READY                    = "Ready";
-    public String    STATUS_ERROR                    = "Error";
-    public String    STATUS_CONNECTING               = "Connecting";
-    public int       STATUS_READY_COLOR[]            = {255,255,255};
-    public int       STATUS_ERROR_COLOR[]            = {255,255,255};
-    public int       STATUS_CONNECTING_COLOR[]       = {255,255,255};
+    public int          STATUS_LABEL_HEIGHT             = 50;
+    public String       STATUS_READY                    = "Ready";
+    public String       STATUS_ERROR                    = "Error";
+    public String       STATUS_PENDING                  = "Pending";
+    public int          STATUS_READY_COLOR[]            = {255,255,255};
+    public int          STATUS_ERROR_COLOR[]            = {255,255,255};
+    public int          STATUS_PENDING_COLOR[]          = {255,255,255};
 
-    public int       ITEM_TEXT_HEIGHT                = 40;
+    public int          ITEM_TEXT_HEIGHT                = 40;
 
-    public int       TOTAL_TEXT_COLOR[]              = {255,255,255};
-    public int       TOTAL_TEXT_SIZE                 = 16;
-    public int       STATUS_FONT_SIZE                = 16;
+    public int          TOTAL_TEXT_COLOR[]              = {255,255,255};
+    public int          TOTAL_TEXT_SIZE                 = 16;
+    public int          STATUS_FONT_SIZE                = 16;
 
-    public int       STATUS_READY_TEXT_COLOR[]       = {255,255,255};
-    public int       STATUS_ERROR_TEXT_COLOR[]       = {255,255,255};
-    public int       STATUS_CONNECTING_TEXT_COLOR[]  = {255,255,255};
+    public int          STATUS_READY_TEXT_COLOR[]       = {255,255,255};
+    public int          STATUS_ERROR_TEXT_COLOR[]       = {255,255,255};
+    public int          STATUS_PENDING_TEXT_COLOR[]     = {255,255,255};
 
-    public int       CARGO_LABEL_PADDING[]           = {0,0,0,0};
-    public int       CARGO_TEXT_PADDING[]            = {0,0,0,0};
-    public int       ITEM_LABEL_PADDING[]            = {0,0,0,0};
-    public int       ITEM_TEXT_PADDING[]             = {0,0,0,0};
-    public int       TOTAL_LABEL_PADDING[]           = {0,0,0,0};
-    public int       TOTAL_TEXT_PADDING[]            = {0,0,0,0};
+    public int          CARGO_LABEL_PADDING[]           = {0,0,0,0};
+    public int          CARGO_TEXT_PADDING[]            = {0,0,0,0};
+    public int          ITEM_LABEL_PADDING[]            = {0,0,0,0};
+    public int          ITEM_TEXT_PADDING[]             = {0,0,0,0};
+    public int          TOTAL_LABEL_PADDING[]           = {0,0,0,0};
+    public int          TOTAL_TEXT_PADDING[]            = {0,0,0,0};
 
-    public String    REGEXP_BARCODE                  = "";
-    public String    REGEXP_DATAMATRIX               = "";
+    public boolean      FULLSCREEN                      = false;
+
+    public String       REGEXP_BARCODE                  = "";
+    public String       REGEXP_DATAMATRIX               = "";
+    public String       WINDOW_TITLE                    = "";
+
+    public int          FORM_TITLE_COLOR[]              = {255,255,255};
+    public int          FORM_TITLE_SIZE                 = 20;
+    public int          FORM_TITLE_PADDING[]            = {0,0,0,0};
 
     public void init(String path){
         try(FileReader reader = new FileReader(path))
@@ -118,8 +125,8 @@ public class Settings {
                     case "STATUS_ERROR:":
                         STATUS_ERROR = readString(reader);
                         break;
-                    case "STATUS_CONNECTING:":
-                        STATUS_CONNECTING = readString(reader);
+                    case "STATUS_PENDING:":
+                        STATUS_PENDING = readString(reader);
                         break;
                     case "STATUS_READY_COLOR:":
                         STATUS_READY_COLOR = parseColor(readString(reader));
@@ -127,8 +134,8 @@ public class Settings {
                     case "STATUS_ERROR_COLOR:":
                         STATUS_ERROR_COLOR = parseColor(readString(reader));
                         break;
-                    case "STATUS_CONNECTING_COLOR:":
-                        STATUS_CONNECTING_COLOR = parseColor(readString(reader));
+                    case "STATUS_PENDING_COLOR:":
+                        STATUS_PENDING_COLOR = parseColor(readString(reader));
                         break;
                     case "ITEM_TEXT_HEIGHT:":
                         ITEM_TEXT_HEIGHT = Common.hardParseInt(readString(reader), ITEM_TEXT_HEIGHT);
@@ -148,8 +155,8 @@ public class Settings {
                     case "STATUS_ERROR_TEXT_COLOR:":
                         STATUS_ERROR_TEXT_COLOR = parseColor(readString(reader));
                         break;
-                    case "STATUS_CONNECTING_TEXT_COLOR:":
-                        STATUS_CONNECTING_TEXT_COLOR = parseColor(readString(reader));
+                    case "STATUS_PENDING_TEXT_COLOR:":
+                        STATUS_PENDING_TEXT_COLOR = parseColor(readString(reader));
                         break;
                     case "CARGO_LABEL_PADDING:":
                         CARGO_LABEL_PADDING = parsePaddings(readString(reader));
@@ -171,8 +178,26 @@ public class Settings {
                         break;
                     case "REGEXP_BARCODE:":
                         REGEXP_BARCODE = readString(reader);
+                        break;
                     case "REGEXP_DATAMATRIX:":
                         REGEXP_DATAMATRIX = readString(reader);
+                        break;
+                    case "WINDOW_SIZE:":
+                        String screenSize = readString(reader);
+                        if(screenSize.equals("fullscreen")) FULLSCREEN = true;
+                        break;
+                    case "WINDOW_TITLE:":
+                        WINDOW_TITLE = readString(reader);
+                        break;
+                    case "FORM_TITLE_COLOR:":
+                        FORM_TITLE_COLOR = parseColor(readString(reader));
+                        break;
+                    case "FORM_TITLE_SIZE:":
+                        FORM_TITLE_SIZE = Common.hardParseInt(readString(reader), FORM_TITLE_SIZE);
+                        break;
+                    case "FORM_TITLE_PADDING:":
+                        FORM_TITLE_PADDING = parsePaddings(readString(reader));
+                        break;
                     default:
                         continue;
                 }

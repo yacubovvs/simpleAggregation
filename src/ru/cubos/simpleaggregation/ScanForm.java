@@ -3,10 +3,12 @@ package ru.cubos.simpleaggregation;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ScannForm extends ScannerJFrame {
+public class ScanForm extends ScannerJFrame {
     private JPanel mainPanel;
     private JLabel cargoCode;
     private JLabel totalInCargo;
@@ -16,20 +18,28 @@ public class ScannForm extends ScannerJFrame {
     private JLabel totalInCargoLabel;
     private JLabel statusLabel;
     private JPanel statusPanel;
+    private JLabel formTitleLabel;
 
     Settings settings = new Settings();
 
-    public ScannForm(String settings_files[]) {
+    String current_box      = "";
+    String current_item     = "";
+    String current_count    = "";
+
+    public ScanForm(String settings_files[]) {
         super();
+        switchKeyBoardEn();
 
         for(String settings_file: settings_files){
             settings.init(settings_file);
         }
 
-        setSize(320, 240);
+        setSize(480, 320);
         setContentPane(mainPanel);
 
-        setTitle(settings.FORM_TITLE);
+        if(settings.FULLSCREEN) setExtendedState(MAXIMIZED_BOTH);
+
+        setTitle(settings.WINDOW_TITLE);
 
         cargoLabel.setText(settings.CARGO_LABEL_TEXT);
         cargoLabel.setForeground(new Color(settings.CARGO_LABEL_TEXT_COLOR[0], settings.CARGO_LABEL_TEXT_COLOR[1], settings.CARGO_LABEL_TEXT_COLOR[2]));
@@ -74,9 +84,7 @@ public class ScannForm extends ScannerJFrame {
         itemCode.setMaximumSize(new Dimension(-1, settings.ITEM_TEXT_HEIGHT));
         itemCode.setSize(new Dimension(-1, settings.ITEM_TEXT_HEIGHT));
 
-        setConnectingStatus();
         setTextSize(statusLabel, settings.STATUS_FONT_SIZE);
-        //setExtendedState(MAXIMIZED_BOTH);
 
         setPadding(cargoLabel, settings.CARGO_LABEL_PADDING);
         setPadding(cargoCode, settings.CARGO_TEXT_PADDING);
@@ -87,15 +95,31 @@ public class ScannForm extends ScannerJFrame {
         setPadding(totalInCargoLabel, settings.TOTAL_LABEL_PADDING);
         setPadding(totalInCargo, settings.TOTAL_TEXT_PADDING);
 
+        setPadding(formTitleLabel, settings.FORM_TITLE_PADDING);
+        setTextSize(formTitleLabel, settings.FORM_TITLE_SIZE);
+        formTitleLabel.setText(settings.FORM_TITLE);
+        formTitleLabel.setForeground(new Color(settings.FORM_TITLE_COLOR[0], settings.FORM_TITLE_COLOR[1], settings.FORM_TITLE_COLOR[2]));
+
+        setPendingStatus("Отсканируйте короб");
         setVisible(true);
 
         //onScan("00123456789012345678");
-        //onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
-        onScan("-");
-        onScan("-");
-        totalInCargo.setText("00000");
-        //onScan("01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=01046070078211312100000000000591ee0592ek0v49b3v4t4r82pamitz5857i=");
+        //onScan("010460700782113121000000000005E91ee0592s0FXM0lXOYDtnU7QNWH93jam61KMVShZqbdnpDqHTFs=");
 
+        itemCode.setText("-");
+        cargoCode.setText("-");
+        setValueInCargo("-");
+
+        /*
+        // При изменении размера формы
+        this.getRootPane().addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                // This is only called when the user releases the mouse button.
+                ScanForm.this.repaint();
+                ScanForm.this.validate();
+            }
+        });
+        */
     }
 
     void setPadding(JLabel jLabel, int paddings[]){
@@ -106,18 +130,41 @@ public class ScannForm extends ScannerJFrame {
         jLabel.setBorder(new EmptyBorder(paddings[0],paddings[1],paddings[2],paddings[3]));
     }
 
-    void setConnectingStatus(){
-        statusLabel.setText(settings.STATUS_CONNECTING);
-        statusPanel.setBackground(new Color(settings.STATUS_CONNECTING_COLOR[0], settings.STATUS_CONNECTING_COLOR[1], settings.STATUS_CONNECTING_COLOR[2]));
+    void setPendingStatus(){
+        statusLabel.setText(settings.STATUS_PENDING);
+        statusLabel.setForeground(new Color(settings.STATUS_PENDING_TEXT_COLOR[0], settings.STATUS_PENDING_TEXT_COLOR[1], settings.STATUS_PENDING_TEXT_COLOR[2]));
+        statusPanel.setBackground(new Color(settings.STATUS_PENDING_COLOR[0], settings.STATUS_PENDING_COLOR[1], settings.STATUS_PENDING_COLOR[2]));
     }
+
+    void setPendingStatus(String pendingText){
+        statusLabel.setText(pendingText);
+        statusLabel.setForeground(new Color(settings.STATUS_PENDING_TEXT_COLOR[0], settings.STATUS_PENDING_TEXT_COLOR[1], settings.STATUS_PENDING_TEXT_COLOR[2]));
+        statusPanel.setBackground(new Color(settings.STATUS_PENDING_COLOR[0], settings.STATUS_PENDING_COLOR[1], settings.STATUS_PENDING_COLOR[2]));
+    }
+
+
 
     void setReadyStatus(){
         statusLabel.setText(settings.STATUS_READY);
+        statusLabel.setForeground(new Color(settings.STATUS_READY_TEXT_COLOR[0], settings.STATUS_READY_TEXT_COLOR[1], settings.STATUS_READY_TEXT_COLOR[2]));
+        statusPanel.setBackground(new Color(settings.STATUS_READY_COLOR[0], settings.STATUS_READY_COLOR[1], settings.STATUS_READY_COLOR[2]));
+    }
+
+    void setReadyStatus(String readyText){
+        statusLabel.setText(readyText);
+        statusLabel.setForeground(new Color(settings.STATUS_READY_TEXT_COLOR[0], settings.STATUS_READY_TEXT_COLOR[1], settings.STATUS_READY_TEXT_COLOR[2]));
         statusPanel.setBackground(new Color(settings.STATUS_READY_COLOR[0], settings.STATUS_READY_COLOR[1], settings.STATUS_READY_COLOR[2]));
     }
 
     void setErrorStatus(){
         statusLabel.setText(settings.STATUS_ERROR);
+        statusLabel.setForeground(new Color(settings.STATUS_ERROR_TEXT_COLOR[0], settings.STATUS_ERROR_TEXT_COLOR[1], settings.STATUS_ERROR_TEXT_COLOR[2]));
+        statusPanel.setBackground(new Color(settings.STATUS_ERROR_COLOR[0], settings.STATUS_ERROR_COLOR[1], settings.STATUS_ERROR_COLOR[2]));
+    }
+
+    void setErrorStatus(String errorText){
+        statusLabel.setText(errorText);
+        statusLabel.setForeground(new Color(settings.STATUS_ERROR_TEXT_COLOR[0], settings.STATUS_ERROR_TEXT_COLOR[1], settings.STATUS_ERROR_TEXT_COLOR[2]));
         statusPanel.setBackground(new Color(settings.STATUS_ERROR_COLOR[0], settings.STATUS_ERROR_COLOR[1], settings.STATUS_ERROR_COLOR[2]));
     }
 
@@ -135,10 +182,10 @@ public class ScannForm extends ScannerJFrame {
         String settings_files[] = {
                 "settings/scanner_mdlp.txt",
                 "settings/common.txt",
-                "settings/form_insert_320_240.txt",
+                "settings/form_insert_fullScreen.txt",
         };
 
-        new ScannForm(settings_files);
+        new ScanForm(settings_files);
     }
 
     @Override
@@ -157,12 +204,57 @@ public class ScannForm extends ScannerJFrame {
         Matcher matcherDataMatrix = patternDataMatrix.matcher(scanResult);
         Matcher matcherBoxBarcode = patternBoxBarcode.matcher(scanResult);
 
+        setReadyStatus();
+
         if(matcherBoxBarcode.matches()){
-            cargoCode.setText(scanResult);
+            onInputNewBox(scanResult);
         }else if(matcherDataMatrix.matches()){
-            itemCode.setText(scanResult);
+            onInputNewItem(scanResult);
         }else{
-            itemCode.setText(scanResult);
+            if(("" + scanResult).equals("command_exit")){
+                System.exit(0);
+            }else{
+                setErrorStatus("Не верный штрих код");
+            }
+        }
+
+    }
+
+    /*
+    String current_box      = "";
+    String current_item     = "";
+    String current_count    = "";
+    */
+
+    void onInputNewBox(String boxScannedCode){
+        cargoCode.setText(boxScannedCode);
+        current_box = boxScannedCode;
+        current_item = "";
+        itemCode.setText("-");
+        setPendingStatus("Отсканируйте товар");
+    }
+
+    void setValueInCargo(int value){
+        int minLength = 5;
+        String sValue = "0000000000000" + value;
+        if(("" + value).length()>minLength){
+            totalInCargo.setText("" + value);
+        }else{
+            totalInCargo.setText(sValue.substring(sValue.length()-5));
+        }
+    }
+
+    void setValueInCargo(String value){
+        totalInCargo.setText(value);
+    }
+
+    void onInputNewItem(String itemScannedCode){
+        itemCode.setText(itemScannedCode);
+        current_item = itemScannedCode;
+        if(current_box.equals("")){
+            setErrorStatus("Не введен короб");
+        }else{
+            setPendingStatus("Отправка");
         }
     }
 }
