@@ -2,10 +2,8 @@ ARM_ID:
 2769665568
 
 SERVER_ADDRESS:
-http://192.168.0.150/
-#http://mdlp.ddns.net/
-
-WINDOW_SIZE:
-fullscreen
+http://mdlp.ddns.net/
+# http://192.168.0.150/
+# http://mdlp.ddns.net/
 
 #END

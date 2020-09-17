@@ -47,10 +47,13 @@ public class ScanForm extends ScannerJFrame {
             settings.init(settings_file);
         }
 
-        setSize(480, 320);
+        //setSize(480, 320);
         setContentPane(mainPanel);
 
         if(settings.FULLSCREEN) setExtendedState(MAXIMIZED_BOTH);
+        else{
+            setSize(settings.WINDOW_SIZE[0], settings.WINDOW_SIZE[1]);
+        }
 
         setTitle(settings.WINDOW_TITLE);
 
@@ -70,6 +73,16 @@ public class ScanForm extends ScannerJFrame {
 
         itemCode.setForeground(new Color(settings.ITEM_TEXT_COLOR[0], settings.ITEM_TEXT_COLOR[1], settings.ITEM_TEXT_COLOR[2]));
 
+        //textArea.setText(text);
+        itemCode.setWrapStyleWord(true);
+        itemCode.setLineWrap(true);
+        itemCode.setOpaque(false);
+        itemCode.setEditable(false);
+        itemCode.setFocusable(false);
+        itemCode.setBackground(UIManager.getColor("Label.background"));
+        //itemCode.setFont(UIManager.getFont("Label.font"));
+        itemCode.setBorder(UIManager.getBorder("Label.border"));
+
         setTextSize(itemCode, settings.ITEM_TEXT_SIZE);
         setTextSize(cargoLabel, settings.CARGO_LABEL_TEXT_SIZE);
         setTextSize(itemLabel, settings.ITEM_LABEL_TEXT_SIZE);
@@ -78,17 +91,7 @@ public class ScanForm extends ScannerJFrame {
 
         mainPanel.setBackground(new Color(settings.BACKGROUND_COLOR[0],settings.BACKGROUND_COLOR[1],settings.BACKGROUND_COLOR[2]));
 
-        //textArea.setText(text);
-        itemCode.setWrapStyleWord(true);
-        itemCode.setLineWrap(true);
-        itemCode.setOpaque(false);
-        itemCode.setEditable(false);
-        itemCode.setFocusable(false);
-        itemCode.setBackground(UIManager.getColor("Label.background"));
-        itemCode.setFont(UIManager.getFont("Label.font"));
-        itemCode.setBorder(UIManager.getBorder("Label.border"));
-
-        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         statusPanel.setMinimumSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));
         statusPanel.setMaximumSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));
         statusPanel.setSize(new Dimension(-1, settings.STATUS_LABEL_HEIGHT));

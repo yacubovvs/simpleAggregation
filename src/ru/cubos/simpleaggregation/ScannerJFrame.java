@@ -13,6 +13,7 @@ public class ScannerJFrame extends JFrame {
     public ScannerJFrame(){
         startScanListeners();
     }
+    public char lastKey = 0;
 
     Thread checkLastKeyDelay;
     KeyEventDispatcher keyEventDispatcher;
@@ -30,10 +31,8 @@ public class ScannerJFrame extends JFrame {
             while(true){
                 if(stopThreadVal) break;
                 long keyPeriod = System.currentTimeMillis() - lastScanTime;
-                if (keyPeriod>keyDelayForScanner && scanResult!=""){
-                    //System.out.println("Scan result " + scanResult);
-                    onScan(scanResult);
-                    scanResult = "";
+                if (keyPeriod>keyDelayForScanner && scanResult!="" || lastKey == '\n'){
+                    setOnScan();
                 }
                 try {
                     Thread.sleep(keyDelayForScanner/2);
@@ -52,13 +51,24 @@ public class ScannerJFrame extends JFrame {
                 lastScanTime = System.currentTimeMillis();
                 onKeyGot(e.getKeyChar());
                 if(e.getKeyChar()==65535) return true;
-                scanResult += (char) e.getKeyChar();
+                lastKey = (char) e.getKeyChar();
+                scanResult += (char) lastKey;
+
+                if(lastKey == '\n'){
+                    setOnScan();
+                }
+
                 return true;
             }
             return true;
         };
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+    }
 
+    void setOnScan(){
+        onScan(scanResult);
+        scanResult = "";
+        lastKey = 0;
     }
 
     public void switchKeyBoardEn(){

@@ -49,6 +49,8 @@ public class Settings {
     public int          TOTAL_LABEL_PADDING[]           = {0,0,0,0};
     public int          TOTAL_TEXT_PADDING[]            = {0,0,0,0};
 
+    public int          WINDOW_SIZE[]                   = {0,0};
+
     public boolean      FULLSCREEN                      = false;
 
     public String       REGEXP_BARCODE                  = "";
@@ -186,7 +188,12 @@ public class Settings {
                         break;
                     case "WINDOW_SIZE:":
                         String screenSize = readString(reader);
-                        if(screenSize.equals("fullscreen")) FULLSCREEN = true;
+                        if(screenSize.equals("fullscreen")){
+                            FULLSCREEN = true;
+                        } else {
+                            FULLSCREEN = false;
+                            WINDOW_SIZE = parseSize(screenSize);
+                        }
                         break;
                     case "WINDOW_TITLE:":
                         WINDOW_TITLE = readString(reader);
@@ -212,6 +219,15 @@ public class Settings {
         catch(IOException ex){
             System.out.println(ex.getMessage());
         }
+    }
+
+    int[] parseSize(String string){
+        String strings[] = string.split("x");
+        int size[] = {
+                Common.hardParseInt(strings[0].trim(), 0),
+                Common.hardParseInt(strings[1].trim(), 0),
+        };
+        return size;
     }
 
     static int[] parsePaddings(String string){
