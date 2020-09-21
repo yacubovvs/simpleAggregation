@@ -1,7 +1,7 @@
 WINDOW_TITLE:
-Форма агрегации
+Форма очистки короба
 FORM_TITLE:
-Агрегация
+Очистка короба
 ITEM_LABEL_TEXT:
 Товар:
 CARGO_LABEL_TEXT:
@@ -95,4 +95,4 @@ fullscreen
 _1366x768
 _fullscreen
 
-#END
+#END#END
