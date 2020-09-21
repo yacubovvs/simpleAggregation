@@ -220,11 +220,14 @@ public class ScanForm extends ScannerJFrame {
 
     @Override
     public void onKeyGot(char key) {
+        //System.out.println("" + key);
         return;
     }
 
     @Override
     public void onScan(String scanResult) {
+        //System.out.println("scanned value: " + scanResult);
+        scanResult = scanResult.replace("\u001B0029\u001B", "");
         System.out.println("scanned value: " + scanResult);
         scanResult = scanResult.trim();
         if(scanResult.equals("")) scanResult = "-";
