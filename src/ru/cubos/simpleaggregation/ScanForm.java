@@ -309,6 +309,7 @@ public class ScanForm extends ScannerJFrame {
         current_item = itemScannedCode;
         if(current_box.equals("")){
             setErrorStatus("Не введен короб");
+            blockReading = false;
         }else{
             setPendingStatus("Отправка");
 
