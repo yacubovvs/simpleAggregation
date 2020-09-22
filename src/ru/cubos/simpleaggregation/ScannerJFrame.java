@@ -13,7 +13,8 @@ public class ScannerJFrame extends JFrame {
     public ScannerJFrame(){
         startScanListeners();
     }
-    public char lastKey = 0;
+    public String lastKey = "";
+    public static String specialSymbol = "[specSymbol]";
 
     Thread checkLastKeyDelay;
     KeyEventDispatcher keyEventDispatcher;
@@ -31,7 +32,7 @@ public class ScannerJFrame extends JFrame {
             while(true){
                 if(stopThreadVal) break;
                 long keyPeriod = System.currentTimeMillis() - lastScanTime;
-                if (keyPeriod>keyDelayForScanner && scanResult!="" || lastKey == '\n'){
+                if (keyPeriod>keyDelayForScanner && scanResult!="" || lastKey.equals("\n") ){
                     setOnScan();
                 }
                 try {
@@ -50,11 +51,11 @@ public class ScannerJFrame extends JFrame {
             if(e.getID() == KeyEvent.KEY_PRESSED) {
                 lastScanTime = System.currentTimeMillis();
                 onKeyGot(e.getKeyChar());
-                if(e.getKeyChar()==65535) return true;
-                lastKey = (char) e.getKeyChar();
-                scanResult += (char) lastKey;
+                if(e.getKeyChar()==65535) lastKey = specialSymbol;
+                else lastKey = "" + e.getKeyChar();
+                scanResult += lastKey;
 
-                if(lastKey == '\n'){
+                if(lastKey.equals("\n")){
                     setOnScan();
                 }
 
@@ -68,7 +69,7 @@ public class ScannerJFrame extends JFrame {
     void setOnScan(){
         onScan(scanResult);
         scanResult = "";
-        lastKey = 0;
+        lastKey = "";
     }
 
     public void switchKeyBoardEn(){

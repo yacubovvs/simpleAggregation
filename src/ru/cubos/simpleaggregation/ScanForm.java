@@ -220,14 +220,18 @@ public class ScanForm extends ScannerJFrame {
 
     @Override
     public void onKeyGot(char key) {
-        //System.out.println("" + key);
+        //System.out.println("*" + key + "*");
+        //System.out.println("*" + (int)key + "*");
+
         return;
     }
 
     @Override
     public void onScan(String scanResult) {
         //System.out.println("scanned value: " + scanResult);
-        scanResult = scanResult.replace("\u001B0029\u001B", "");
+        scanResult = scanResult.replace(specialSymbol + "0029", ""); // Need for zebra barcide scanner
+        //scanResult = scanResult.replace(specialSymbol + "002991" + specialSymbol, "");
+        scanResult = scanResult.replace(specialSymbol, "");
         System.out.println("scanned value: " + scanResult);
         scanResult = scanResult.trim();
         if(scanResult.equals("")) scanResult = "-";
