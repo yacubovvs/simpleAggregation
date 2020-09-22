@@ -10,15 +10,16 @@ public class ScannerJFrame extends JFrame {
     private String scanResult = "";
     private long lastScanTime;
     private int keyDelayForScanner = 100;
-    public ScannerJFrame(){
-        startScanListeners();
-    }
     public String lastKey = "";
     public static String specialSymbol = "[specSymbol]";
 
     Thread checkLastKeyDelay;
     KeyEventDispatcher keyEventDispatcher;
     private boolean stopThreadVal = false;
+
+    public ScannerJFrame(){
+        startScanListeners();
+    }
 
     public void stopKeyListeners(){
         stopThreadVal = true;

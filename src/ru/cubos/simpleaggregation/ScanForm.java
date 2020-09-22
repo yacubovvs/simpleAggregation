@@ -23,7 +23,7 @@ public class ScanForm extends ScannerJFrame {
     private JLabel statusLabel;
     private JPanel statusPanel;
     private JLabel formTitleLabel;
-
+    private boolean blockReading = false;
     Settings settings = new Settings();
 
     String current_box      = "";
@@ -218,20 +218,24 @@ public class ScanForm extends ScannerJFrame {
         new ScanForm(settings_files, FormType.Extract);
     }
 
+    int i= 0;
     @Override
     public void onKeyGot(char key) {
-        //System.out.println("*" + key + "*");
-        //System.out.println("*" + (int)key + "*");
+        i++;
+        System.out.print("" + i + "   *" + key + "*");
+        System.out.println("*" + (int)key + "*");
 
         return;
     }
 
     @Override
     public void onScan(String scanResult) {
-        //System.out.println("scanned value: " + scanResult);
-        scanResult = scanResult.replace(specialSymbol + "0029", ""); // Need for zebra barcide scanner
-        //scanResult = scanResult.replace(specialSymbol + "002991" + specialSymbol, "");
+        //System.out.println("scanned value raw: " + scanResult);
+        scanResult = scanResult.replace(specialSymbol + "0029", ""); // Need for zebra barcode scanner for datamatrix MDLP
+        scanResult = scanResult.replace(specialSymbol + "029", ""); // Need for zebra barcode scanner for datamatrix MDLP
         scanResult = scanResult.replace(specialSymbol, "");
+        scanResult = scanResult.replace(" ", "");
+        scanResult = scanResult.replaceAll("[\\x00-\\x1F]", "");
         System.out.println("scanned value: " + scanResult);
         scanResult = scanResult.trim();
         if(scanResult.equals("")) scanResult = "-";
@@ -295,6 +299,9 @@ public class ScanForm extends ScannerJFrame {
     }
 
     void onInputNewItem(String itemScannedCode){
+        if(!settings.ASYNC_SEND && blockReading){
+            setPendingStatus("Подождите отправки данных на сервер");
+        }
         itemCode.setText(itemScannedCode);
         current_item = itemScannedCode;
         if(current_box.equals("")){
@@ -302,40 +309,37 @@ public class ScanForm extends ScannerJFrame {
         }else{
             setPendingStatus("Отправка");
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    APIConnector apiConnector = new APIConnector(settings.SERVER_ADDRESS, settings.ARM_ID);
-
-
-                    if(currentType==FormType.Extract){
-                        String resultText = apiConnector.insertItemDisagregation(current_box, current_item);
-                        String result = JSONParser.getElementOfJSON(resultText, "result");
-                        if(result.substring(0,5).equals("error")){
-                            String message = JSONParser.getElementOfJSON(resultText, "message");
-                            setErrorStatus(message);
-                        }else if(result.equals("success")){
-                            setReadyStatus();
-                            String count = JSONParser.getElementOfJSON(resultText, "count");
-                            setValueInCargo(Common.hardParseInt(count, 0));
-                        }else{
-                            setErrorStatus("Ошибка связи с сервером");
-                        }
-                    }else if(currentType==FormType.Insert){
-                        String resultText = apiConnector.insertItemAggregation(current_box, current_item);
-                        String result = JSONParser.getElementOfJSON(resultText, "result");
-                        if(result.substring(0,5).equals("error")){
-                            String message = JSONParser.getElementOfJSON(resultText, "message");
-                            setErrorStatus(message);
-                        }else if(result.equals("success")){
-                            setReadyStatus();
-                            String count = JSONParser.getElementOfJSON(resultText, "count");
-                            setValueInCargo(Common.hardParseInt(count, 0));
-                        }else{
-                            setErrorStatus("Ошибка связи с сервером");
-                        }
+            Thread thread = new Thread(() -> {
+                blockReading = true;
+                APIConnector apiConnector = new APIConnector(settings.SERVER_ADDRESS, settings.ARM_ID);
+                if(currentType==FormType.Extract){
+                    String resultText = apiConnector.insertItemDisagregation(current_box, current_item);
+                    String result = JSONParser.getElementOfJSON(resultText, "result");
+                    if(result.substring(0,5).equals("error")){
+                        String message = JSONParser.getElementOfJSON(resultText, "message");
+                        setErrorStatus(message);
+                    }else if(result.equals("success")){
+                        setReadyStatus();
+                        String count = JSONParser.getElementOfJSON(resultText, "count");
+                        setValueInCargo(Common.hardParseInt(count, 0));
+                    }else{
+                        setErrorStatus("Ошибка связи с сервером");
+                    }
+                }else if(currentType==FormType.Insert){
+                    String resultText = apiConnector.insertItemAggregation(current_box, current_item);
+                    String result = JSONParser.getElementOfJSON(resultText, "result");
+                    if(result.substring(0,5).equals("error")){
+                        String message = JSONParser.getElementOfJSON(resultText, "message");
+                        setErrorStatus(message);
+                    }else if(result.equals("success")){
+                        setReadyStatus();
+                        String count = JSONParser.getElementOfJSON(resultText, "count");
+                        setValueInCargo(Common.hardParseInt(count, 0));
+                    }else{
+                        setErrorStatus("Ошибка связи с сервером");
                     }
                 }
+                blockReading = false;
             });
             thread.start();
 

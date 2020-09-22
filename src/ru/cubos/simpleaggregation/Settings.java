@@ -63,6 +63,8 @@ public class Settings {
 
     public String       SERVER_ADDRESS                  = "";
 
+    public boolean      ASYNC_SEND                      = true;
+
     public void init(String path){
         try(FileReader reader = new FileReader(path))
         {
@@ -210,6 +212,9 @@ public class Settings {
                     case "SERVER_ADDRESS:":
                         SERVER_ADDRESS = readString(reader);
                         break;
+                    case "ASYNC_SEND:":
+                        ASYNC_SEND = parseBoolean(readString(reader));
+                        break;
                     default:
                         continue;
                 }
@@ -218,6 +223,14 @@ public class Settings {
         }
         catch(IOException ex){
             System.out.println(ex.getMessage());
+        }
+    }
+
+    private boolean parseBoolean(String readString) {
+        if(readString.toLowerCase().equals("false")){
+            return false;
+        }else{
+            return true;
         }
     }
 
