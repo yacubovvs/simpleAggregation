@@ -251,7 +251,6 @@ public class ScanForm extends ScannerJFrame {
             onInputNewBox(scanResult);
         }else if(matcherDataMatrix.matches()){
             onInputNewItem(scanResult);
-            onInputNewItem(scanResult);
         }else{
             //Commands
             if(scanResult.equals("command_exit")){
@@ -342,9 +341,17 @@ public class ScanForm extends ScannerJFrame {
                         setErrorStatus("Ошибка связи с сервером");
                     }
                 }
+
                 blockReading = false;
             });
             thread.start();
+            if(!settings.ASYNC_SEND){
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             /*
             try {
                 thread.join();
