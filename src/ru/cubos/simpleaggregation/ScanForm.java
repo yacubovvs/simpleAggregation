@@ -232,10 +232,10 @@ public class ScanForm extends ScannerJFrame {
     public void onScan(String scanResult) {
         //System.out.println("scanned value raw: " + scanResult);
         scanResult = scanResult.replace(specialSymbol + "0029", ""); // Need for zebra barcode scanner for datamatrix MDLP
-        scanResult = scanResult.replace(specialSymbol + "029", ""); // Need for zebra barcode scanner for datamatrix MDLP
+        //scanResult = scanResult.replace(specialSymbol + "029", ""); // Need for zebra barcode scanner for datamatrix MDLP
         scanResult = scanResult.replace(specialSymbol, "");
-        scanResult = scanResult.replace(" ", "");
-        scanResult = scanResult.replaceAll("[\\x00-\\x1F]", "");
+        //scanResult = scanResult.replace(" ", "");
+        //scanResult = scanResult.replaceAll("[\\x00-\\x1F]", ""); // removing unread symbols
         System.out.println("scanned value: " + scanResult);
         scanResult = scanResult.trim();
         if(scanResult.equals("")) scanResult = "-";
@@ -250,6 +250,7 @@ public class ScanForm extends ScannerJFrame {
         if(matcherBoxBarcode.matches()){
             onInputNewBox(scanResult);
         }else if(matcherDataMatrix.matches()){
+            onInputNewItem(scanResult);
             onInputNewItem(scanResult);
         }else{
             //Commands
@@ -304,6 +305,7 @@ public class ScanForm extends ScannerJFrame {
             setPendingStatus("Подождите отправки данных на сервер");
             return;
         }
+        blockReading = true;
         itemCode.setText(itemScannedCode);
         current_item = itemScannedCode;
         if(current_box.equals("")){
@@ -312,7 +314,6 @@ public class ScanForm extends ScannerJFrame {
             setPendingStatus("Отправка");
 
             Thread thread = new Thread(() -> {
-                blockReading = true;
                 APIConnector apiConnector = new APIConnector(settings.SERVER_ADDRESS, settings.ARM_ID);
                 if(currentType==FormType.Extract){
                     String resultText = apiConnector.insertItemDisagregation(current_box, current_item);
@@ -344,6 +345,13 @@ public class ScanForm extends ScannerJFrame {
                 blockReading = false;
             });
             thread.start();
+            /*
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+
 
         }
     }
