@@ -218,15 +218,15 @@ public class ScanForm extends ScannerJFrame {
         new ScanForm(settings_files, FormType.Extract);
     }
 
-    int i= 0;
+    //int i= 0;
+    /*
     @Override
     public void onKeyGot(char key) {
-        i++;
-        System.out.print("" + i + "   *" + key + "*");
-        System.out.println("*" + (int)key + "*");
-
+        //i++;
+        //System.out.print("" + i + "   *" + key + "*");
+        //System.out.println("*" + (int)key + "*");
         return;
-    }
+    }*/
 
     @Override
     public void onScan(String scanResult) {
@@ -281,6 +281,7 @@ public class ScanForm extends ScannerJFrame {
         current_box = boxScannedCode;
         current_item = "";
         itemCode.setText("-");
+        totalInCargo.setText("-");
         setPendingStatus("Отсканируйте товар");
     }
 
@@ -301,6 +302,7 @@ public class ScanForm extends ScannerJFrame {
     void onInputNewItem(String itemScannedCode){
         if(!settings.ASYNC_SEND && blockReading){
             setPendingStatus("Подождите отправки данных на сервер");
+            return;
         }
         itemCode.setText(itemScannedCode);
         current_item = itemScannedCode;
