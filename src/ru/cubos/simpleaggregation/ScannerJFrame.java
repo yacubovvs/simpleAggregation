@@ -9,7 +9,7 @@ import java.util.Locale;
 public class ScannerJFrame extends JFrame {
     private String scanResult = "";
     private long lastScanTime;
-    private int keyDelayForScanner = 100;
+    private int keyDelayForScanner = 150;
     public String lastKey = "";
     public static String specialSymbol = "[specSymbol]";
 

@@ -182,6 +182,20 @@ public class ScanForm extends ScannerJFrame {
         statusLabel.setText(errorText);
         statusLabel.setForeground(new Color(settings.STATUS_ERROR_TEXT_COLOR[0], settings.STATUS_ERROR_TEXT_COLOR[1], settings.STATUS_ERROR_TEXT_COLOR[2]));
         statusPanel.setBackground(new Color(settings.STATUS_ERROR_COLOR[0], settings.STATUS_ERROR_COLOR[1], settings.STATUS_ERROR_COLOR[2]));
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mainPanel.setBackground(new Color(settings.STATUS_ERROR_COLOR[0], settings.STATUS_ERROR_COLOR[1], settings.STATUS_ERROR_COLOR[2]));
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mainPanel.setBackground(new Color(settings.BACKGROUND_COLOR[0],settings.BACKGROUND_COLOR[1],settings.BACKGROUND_COLOR[2]));
+            }
+        });
+        thread.start();
     }
 
     void setTextSize(JLabel jLabel, int fontSize){
@@ -301,7 +315,7 @@ public class ScanForm extends ScannerJFrame {
 
     void onInputNewItem(String itemScannedCode){
         if(!settings.ASYNC_SEND && blockReading){
-            setPendingStatus("Подождите отправки данных на сервер");
+            setErrorStatus("Подождите отправки данных на сервер");
             return;
         }
         blockReading = true;
