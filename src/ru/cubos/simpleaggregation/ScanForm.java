@@ -252,7 +252,10 @@ public class ScanForm extends ScannerJFrame {
         //scanResult = scanResult.replaceAll("[\\x00-\\x1F]", ""); // removing unread symbols
         System.out.println("scanned value: " + scanResult);
         scanResult = scanResult.trim();
-        if(scanResult.equals("")) scanResult = "-";
+        if(scanResult.equals("")) {
+            scanResult = "-";
+            return;
+        }
 
         Pattern patternDataMatrix = Pattern.compile(settings.REGEXP_DATAMATRIX);
         Pattern patternBoxBarcode = Pattern.compile(settings.REGEXP_BARCODE);
@@ -278,7 +281,7 @@ public class ScanForm extends ScannerJFrame {
                 this.dispose();
                 startExtract();
             }else{
-                setErrorStatus("Не верный штрих код");
+                setErrorStatus("Не верный штрих код " + scanResult);
             }
         }
 
@@ -314,6 +317,7 @@ public class ScanForm extends ScannerJFrame {
     }
 
     void onInputNewItem(String itemScannedCode){
+        System.out.println("Test " + itemScannedCode);
         if(!settings.ASYNC_SEND && blockReading){
             setErrorStatus("Подождите отправки данных на сервер");
             return;

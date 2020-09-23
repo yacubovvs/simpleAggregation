@@ -56,9 +56,9 @@ public class ScannerJFrame extends JFrame {
                 else lastKey = "" + e.getKeyChar();
                 scanResult += lastKey;
 
-                if(lastKey.equals("\n")){
-                    setOnScan();
-                }
+                //if(lastKey.equals("\n")){
+                //    setOnScan();
+                //}
 
                 return true;
             }
